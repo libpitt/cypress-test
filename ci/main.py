@@ -5,7 +5,7 @@ from websockets.sync.client import connect
 import datetime
 
 def main():
-    with connect("ws://localhost:8765") as websocket:
+    with connect("wss://c81f-2601-547-cc01-6200-8df3-bd33-eb87-696f.ngrok-free.app") as websocket:
         websocket.send(f"Requesting Cypress reports ... Date: {datetime.datetime.now()}. ")
         receiving = True
         results = {}
