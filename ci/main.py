@@ -26,8 +26,11 @@ def workflow_printer(message):
 
 
 def is_complete(result):
-    path = result.get('path')
-    return path is not None and 'complete.json' in path
+    report = result.get('report')
+    if report is not None and type(report) is not str:
+        return report.get('complete')
+    else:
+        return False
 
 
 def main():
@@ -37,10 +40,12 @@ def main():
         results = {}
         while receiving is True:
             message = websocket.recv()
-            workflow_printer(message)
+            #print('received', message)
             result = json.loads(message)
             if is_complete(result):
                 receiving = False
+            else:
+                workflow_printer(message)
             results.update(result)
 
         return json.dumps(results)
