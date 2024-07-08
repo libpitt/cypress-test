@@ -8,21 +8,21 @@ import datetime
 def workflow_printer(message):
     result = json.loads(message)
     if is_complete(result):
-        print(f"::notice title=Tests complete")
+        print(f"::notice::Tests complete")
         return
     test = result.get('report')
     if test is not None and test.get('reporter') == 'spec':
         print(f"::group::{test.get('spec').get('relative')}")  # group title
         stats = test.get('reporterStats', '')
         state = 'error' if stats.get('failures') > 0 else 'notice'
-        print(f"::{state} title=Tests: {stats.get('tests')} ; Passes: {stats.get('passes')} ; Fails: {stats.get('failures')}")
+        print(f"::{state}::Tests: {stats.get('tests')} ; Passes: {stats.get('passes')} ; Fails: {stats.get('failures')}")
         for t in test.get('tests'):
             state = 'error' if t.get('state') != 'passed' else 'notice'
             title = ' > '.join(t.get('title', ''))
-            print(f"::{state} title={title}")
+            print(f"::{state}::{title}")
         print("::endgroup::")
     else:
-        print(f"::notice title={json.dumps(result)}")
+        print(f"::notice::{json.dumps(result)}")
 
 
 def is_complete(result):
