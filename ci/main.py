@@ -17,11 +17,9 @@ def workflow_printer(message):
         state = 'error' if stats.get('failures') > 0 else 'notice'
         print(f"::{state}::Tests: {stats.get('tests')} ; Passes: {stats.get('passes')} ; Fails: {stats.get('failures')}")
         for t in test.get('tests'):
-            has_failed = t.get('state') != 'passed'
-            state = 'error' if has_failed else 'notice'
+            state = 'error' if t.get('state') != 'passed' else 'notice'
             title = ' > '.join(t.get('title', ''))
-            emoji = ':x:' if has_failed else ':white_check_mark:'
-            print(f"::{state}::{title} {emoji}")
+            print(f"::{state}::{title}:white_check_mark:")
         print("::endgroup::")
     else:
         print(f"::notice::{json.dumps(result)}")
