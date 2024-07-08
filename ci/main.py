@@ -3,6 +3,7 @@ import json
 
 from websockets.sync.client import connect
 import datetime
+from colorist import Color
 
 
 def workflow_printer(message):
@@ -17,12 +18,15 @@ def workflow_printer(message):
         state = 'error' if stats.get('failures') > 0 else 'notice'
         print(f"::{state}::Tests: {stats.get('tests')} ; Passes: {stats.get('passes')} ; Fails: {stats.get('failures')}")
         for t in test.get('tests'):
-            state = 'error' if t.get('state') != 'passed' else 'notice'
+            has_failed = t.get('state') != 'passed'
+            state = 'error' if has_failed else 'notice'
             title = ' > '.join(t.get('title', ''))
-            print(f"::{state}::{title}:white_check_mark:")
+            emoji = '❌  ' if has_failed else '✅  '
+            color = Color.RED if has_failed else Color.GREEN
+            print(f"::{state}::{color}{title}{color.OFF} {emoji}")
         print("::endgroup::")
     else:
-        print(f"::notice::{json.dumps(result)}")
+        print(f"::notice::{Color.CYAN}{result.get('message')}{Color.OFF}")
 
 
 def is_complete(result):
@@ -35,7 +39,7 @@ def is_complete(result):
 
 def main():
     with connect("wss://c81f-2601-547-cc01-6200-8df3-bd33-eb87-696f.ngrok-free.app") as websocket:
-        websocket.send(f"Requesting Cypress reports ... Date: {datetime.datetime.now()}. :rocket:")
+        websocket.send(f"Requesting Cypress reports ... Date: {datetime.datetime.now()}. 🚀 ")
         receiving = True
         results = {}
         while receiving is True:
