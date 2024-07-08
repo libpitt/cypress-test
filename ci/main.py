@@ -17,9 +17,11 @@ def workflow_printer(message):
         state = 'error' if stats.get('failures') > 0 else 'notice'
         print(f"::{state}::Tests: {stats.get('tests')} ; Passes: {stats.get('passes')} ; Fails: {stats.get('failures')}")
         for t in test.get('tests'):
-            state = 'error' if t.get('state') != 'passed' else 'notice'
+            has_failed = t.get('state') != 'passed'
+            state = 'error' if has_failed else 'notice'
             title = ' > '.join(t.get('title', ''))
-            print(f"::{state}::{title}")
+            emoji = ':x:' if has_failed else ':white_check_mark:'
+            print(f"::{state}::{title} {emoji}")
         print("::endgroup::")
     else:
         print(f"::notice::{json.dumps(result)}")
@@ -35,7 +37,7 @@ def is_complete(result):
 
 def main():
     with connect("wss://c81f-2601-547-cc01-6200-8df3-bd33-eb87-696f.ngrok-free.app") as websocket:
-        websocket.send(f"Requesting Cypress reports ... Date: {datetime.datetime.now()}. ")
+        websocket.send(f"Requesting Cypress reports ... Date: {datetime.datetime.now()}. :rocket:")
         receiving = True
         results = {}
         while receiving is True:
